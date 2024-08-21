@@ -1,13 +1,48 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaLinkedin, FaGithub, FaDribbble } from "react-icons/fa";
 import heroImage from "./assets/hero-image.jpg";
 import profileImage from "./assets/profile.jpg";
 import workImage from "./assets/work.jpg";
 import standupImage from "./assets/standup.jpg";
-// import floatingIcon from "./assets/floating-icon.png";
-// import heroBackground from "./assets/hero-background.mp4";
+import heroBackground from "./assets/hero-background.jpg";
 
 const AnaRogojineLandingPage = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const formUrl =
+      "https://docs.google.com/forms/d/e/1FAIpQLSc2vaTnoNDHRqby7Fu11K4SiMA_HoTsyIGYoqXmaL0SeZjBjg/formResponse";
+
+    const formDataToSubmit = new FormData();
+    formDataToSubmit.append("entry.675928970", formData.name); // Name field
+    formDataToSubmit.append("entry.598447563", formData.email); // Email field
+    formDataToSubmit.append("entry.219717655", formData.message); // Message field
+
+    fetch(formUrl, {
+      method: "POST",
+      body: formDataToSubmit,
+      mode: "no-cors",
+    })
+      .then(() => {
+        alert("Message sent successfully!");
+        setFormData({ name: "", email: "", message: "" }); // Clear form
+      })
+      .catch((error) => {
+        console.error("Error submitting form:", error);
+        alert("There was an error sending your message.");
+      });
+  };
+
   const projects = [
     { image: workImage, title: "Project 1" },
     { image: standupImage, title: "Project 2" },
@@ -24,26 +59,17 @@ const AnaRogojineLandingPage = () => {
     <div className="flex flex-col items-center bg-gray-50 min-h-screen px-6 py-10">
       {/* Hero Section */}
       <div className="relative w-full max-w-5xl h-96 bg-gradient-to-r from-blue-500 to-pink-500 rounded-lg shadow-lg overflow-hidden transition-transform transform hover:scale-105">
-        <video
-          // src={heroBackground}
+        <img
+          src={heroBackground}
+          alt="Hero Background"
           className="absolute inset-0 w-full h-full object-cover opacity-50"
-          autoPlay
-          loop
-          muted
-        ></video>
+        />
         <div className="relative z-10 p-8 text-white flex flex-col items-center">
           <h1 className="text-6xl font-extrabold">Ana Rogojine</h1>
           <p className="text-2xl mt-2">Creative Software Developer</p>
           <button className="mt-8 bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition ease-in-out duration-300 transform hover:-translate-y-1 hover:scale-110">
             View Portfolio
           </button>
-        </div>
-        <div className="absolute bottom-0 right-0 p-4">
-          <img
-            // src={floatingIcon}
-            alt="Floating Icon"
-            className="w-16 h-16 animate-bounce"
-          />
         </div>
       </div>
 
@@ -84,24 +110,38 @@ const AnaRogojineLandingPage = () => {
       {/* Contact Section */}
       <div className="bg-white rounded-lg shadow-lg p-6 mt-12 w-full max-w-lg">
         <h2 className="text-2xl font-semibold text-gray-800">Contact Me</h2>
-        <form className="mt-4">
+        <form onSubmit={handleSubmit} className="mt-4">
           <div className="mb-4">
             <label className="block text-gray-700">Name</label>
             <input
               type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               className="w-full px-4 py-2 rounded-lg shadow-sm border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
             />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Email</label>
             <input
               type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               className="w-full px-4 py-2 rounded-lg shadow-sm border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
             />
           </div>
           <div className="mb-4">
             <label className="block text-gray-700">Message</label>
-            <textarea className="w-full px-4 py-2 rounded-lg shadow-sm border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500"></textarea>
+            <textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              className="w-full px-4 py-2 rounded-lg shadow-sm border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500"
+              required
+            ></textarea>
           </div>
           <button
             type="submit"
